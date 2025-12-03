@@ -8,7 +8,6 @@
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');
 
         :root {
-            /* PERMANENT BACKGROUND LINK */
             --bg-image: url('https://i.postimg.cc/C5y5X93V/dancewrapped-template.png'); 
         }
 
@@ -20,39 +19,21 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            /* Use dvh (Dynamic Viewport Height) to account for mobile address bars */
-            min-height: 100dvh; 
-            overflow: hidden; /* Prevents scrolling if possible */
+            min-height: 100vh;
+            overflow: hidden; 
         }
 
-        /* The Container */
         .card-container {
             position: relative;
-            
-            /* SIZING FIX (REVISED): 
-               This setup guarantees the box NEVER distorts from 9:16.
-            */
-            aspect-ratio: 9 / 16;
-            
-            /* 1. Try to fill the width */
-            width: 100%;
-            height: auto;
-            
-            /* 2. BUT, don't let the height exceed 85% of the screen (for bezels/bars) */
-            max-height: 85dvh;
-            
-            /* 3. CRITICAL: If height hits 85dvh, cap the width so ratio doesn't break. 
-                  (85dvh * 9/16 calculates the matching width for that max height) */
-            max-width: calc(85dvh * (9/16));
-            
             background-color: #2d1b4e; 
             box-shadow: 0 0 40px rgba(0,0,0,0.8);
             border-radius: 8px; 
             overflow: hidden;
-            margin: auto; /* Ensures it stays centered if width gets clamped */
+            margin: auto; 
+            /* Dimensions are locked by JS */
         }
 
-        /* --- LAYER 1: The Uploaded Cover Art (Bottom) --- */
+        /* --- LAYER 1: Cover Art --- */
         .cover-art-display {
             position: absolute;
             top: 9.3%;
@@ -64,7 +45,7 @@
             z-index: 1; 
         }
 
-        /* --- LAYER 2: The Template Overlay (Middle) --- */
+        /* --- LAYER 2: Template --- */
         .template-layer {
             position: absolute;
             top: 0;
@@ -79,9 +60,7 @@
             pointer-events: none; 
         }
 
-        /* --- LAYER 3: Interactive Elements (Top) --- */
-        
-        /* Cover Art Click Zone */
+        /* --- LAYER 3: Interactive --- */
         .image-upload-zone {
             position: absolute;
             top: 9.3%;
@@ -92,97 +71,102 @@
             cursor: pointer;
             z-index: 20; 
         }
-
         .image-upload-zone:hover {
             background-color: rgba(255, 255, 255, 0.1);
             outline: 2px dashed rgba(255,255,255,0.3);
         }
-
         .image-upload-zone input[type="file"] { display: none; }
 
-        /* Lists Containers */
-        .left-list-container {
+        /* --- GRID LIST CONTAINERS --- */
+        .left-list-container, .right-list-container {
             position: absolute;
+            width: 44%; 
+            display: grid;
+            grid-template-rows: repeat(5, 1fr); /* 5 Equal Slots */
+            align-items: center; 
+            z-index: 20;
+        }
+
+        /* Slightly tweaked heights/tops to maximize space without misaligning */
+        .left-list-container {
             top: 58.5%; 
             left: 5%; 
-            width: 44%; 
             height: 18.5%; 
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            z-index: 20;
         }
 
         .right-list-container {
-            position: absolute;
-            /* ALIGNMENT FIX: 
-               - Top: 59% (Starts them just right relative to the '1')
-               - Height: 19% (Spreads them out enough to hit the '5' without going over)
-            */
             top: 59%; 
             right: 5%; 
-            width: 44%;
             height: 18%;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            z-index: 20;
         }
 
-        /* Styles for text/inputs */
+        .custom-select-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            /* CRITICAL: Prevents one song from bleeding into the next */
+            overflow: hidden; 
+        }
+
+        /* --- TEXT STYLES --- */
         .text-style-base {
             color: white;
             font-family: 'Montserrat', sans-serif;
             font-weight: 800; 
-            font-size: 0.8rem; 
-            line-height: 1;
+            font-size: 13px;
+            /* Tight line height is crucial for stacking on mobile */
+            line-height: 0.95; 
             white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            transition: font-size 0.2s ease; /* Smooth resizing */
+            overflow: hidden; 
         }
 
-        /* Common Wrapper for Custom Selects */
-        .custom-select-wrapper {
-            position: relative;
+        /* Stacked Layout Styles */
+        .song-line {
+            display: block;
             width: 100%;
-            /* Ensure it has layout to contain absolute children correctly */
-            min-height: 1.2rem;
+            white-space: nowrap;
+            margin-bottom: 1px; /* Tiny gap */
+        }
+        
+        .score-line {
+            display: block;
+            font-size: 10px; /* Small fixed size for score */
+            opacity: 0.9;
+            font-weight: 700;
         }
 
         .selected-text {
-            position: absolute;
-            top: 0;
-            left: 0;
+            position: relative; 
             width: 100%;
             padding-left: 25px; 
             pointer-events: none; 
             z-index: 1;
+            box-sizing: border-box; 
         }
 
         .hidden-select {
-            position: relative; /* Relative allows it to take up space in the flex container if needed */
+            position: absolute; 
+            top: 0;
+            left: 0;
             width: 100%;
+            height: 100%;
             opacity: 0; 
             cursor: pointer;
             z-index: 2;
-            padding: 0;
-            margin: 0;
-            height: 1.2rem; /* Explicit height to match line height */
-            appearance: none;
-            -webkit-appearance: none;
-            border: none;
-            background: transparent;
         }
 
-        /* --- NEW: Mini Score Input for Right Column --- */
+        /* Mini Score Input */
         .mini-score-input {
             position: absolute;
             right: 0;
-            top: -2px; /* Slight adjustment to align with text */
+            top: 50%;
+            transform: translateY(-50%);
             width: 60px;
             height: 1.2rem;
-            background-color: rgba(26, 11, 46, 0.9);
+            background-color: rgba(26, 11, 46, 0.95);
             border: 1px solid rgba(255, 255, 255, 0.5);
             color: white;
             font-family: 'Montserrat', sans-serif;
@@ -190,21 +174,14 @@
             font-size: 0.7rem;
             text-align: center;
             border-radius: 4px;
-            z-index: 100; /* Must be higher than select to be clickable */
-            display: none; /* Hidden by default */
+            z-index: 100; 
+            display: none; 
             outline: none;
         }
         
-        .mini-score-input::-webkit-outer-spin-button,
-        .mini-score-input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-
-        /* Score Input (Bottom Left) */
+        /* Global Score */
         .score-wrapper {
             position: absolute;
-            /* LOWERED: Changed from 13% to 12.8% for a subtle drop */
             bottom: 12.8%;
             left: 5%;
             display: flex;
@@ -234,29 +211,26 @@
             margin-left: 2px;
             pointer-events: none; 
         }
-
-        .score-input:hover, .score-input:focus {
-            border-bottom: 2px solid rgba(255,255,255,0.2);
+        
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
         }
-        .score-input::placeholder { color: rgba(255,255,255,0.3); }
     </style>
 </head>
 <body>
 
     <div class="card-container" id="main-card">
         
-        <!-- LAYER 1: Cover Art (Behind Template) -->
         <img id="preview-image" class="cover-art-display">
-
-        <!-- LAYER 2: Template Overlay -->
         <div class="template-layer" id="template-layer"></div>
 
-        <!-- LAYER 3: Interactive Elements (Top) -->
         <label class="image-upload-zone" title="Click to upload image">
             <input type="file" accept="image/*" onchange="loadCover(event)">
         </label>
 
-        <!-- LEFT COLUMN: Favorite Coaches -->
+        <!-- LEFT COLUMN -->
         <div class="left-list-container">
             <div class="custom-select-wrapper">
                 <div class="selected-text text-style-base" id="display-0">Select...</div>
@@ -290,152 +264,94 @@
             </div>
         </div>
 
-        <!-- RIGHT COLUMN: Top Scores -->
+        <!-- RIGHT COLUMN -->
         <div class="right-list-container">
-            <!-- Row 1 -->
             <div class="custom-select-wrapper">
                 <div class="selected-text text-style-base" id="song-display-0">Select...</div>
                 <select class="hidden-select song-dropdown" data-index="0" onchange="handleSongSelect(this)">
                     <option value="" disabled selected>Select...</option>
                 </select>
-                <input type="number" class="mini-score-input" id="song-score-0" placeholder="Score" min="0" max="13333" onblur="finalizeSongScore(this)" onkeypress="handleScoreKey(event, this)">
+                <input type="number" class="mini-score-input" id="song-score-0" placeholder="Score" onblur="finalizeSongScore(this)" onkeypress="handleScoreKey(event, this)">
             </div>
-            <!-- Row 2 -->
             <div class="custom-select-wrapper">
                 <div class="selected-text text-style-base" id="song-display-1">Select...</div>
                 <select class="hidden-select song-dropdown" data-index="1" onchange="handleSongSelect(this)">
                     <option value="" disabled selected>Select...</option>
                 </select>
-                <input type="number" class="mini-score-input" id="song-score-1" placeholder="Score" min="0" max="13333" onblur="finalizeSongScore(this)" onkeypress="handleScoreKey(event, this)">
+                <input type="number" class="mini-score-input" id="song-score-1" placeholder="Score" onblur="finalizeSongScore(this)" onkeypress="handleScoreKey(event, this)">
             </div>
-            <!-- Row 3 -->
             <div class="custom-select-wrapper">
                 <div class="selected-text text-style-base" id="song-display-2">Select...</div>
                 <select class="hidden-select song-dropdown" data-index="2" onchange="handleSongSelect(this)">
                     <option value="" disabled selected>Select...</option>
                 </select>
-                <input type="number" class="mini-score-input" id="song-score-2" placeholder="Score" min="0" max="13333" onblur="finalizeSongScore(this)" onkeypress="handleScoreKey(event, this)">
+                <input type="number" class="mini-score-input" id="song-score-2" placeholder="Score" onblur="finalizeSongScore(this)" onkeypress="handleScoreKey(event, this)">
             </div>
-            <!-- Row 4 -->
             <div class="custom-select-wrapper">
                 <div class="selected-text text-style-base" id="song-display-3">Select...</div>
                 <select class="hidden-select song-dropdown" data-index="3" onchange="handleSongSelect(this)">
                     <option value="" disabled selected>Select...</option>
                 </select>
-                <input type="number" class="mini-score-input" id="song-score-3" placeholder="Score" min="0" max="13333" onblur="finalizeSongScore(this)" onkeypress="handleScoreKey(event, this)">
+                <input type="number" class="mini-score-input" id="song-score-3" placeholder="Score" onblur="finalizeSongScore(this)" onkeypress="handleScoreKey(event, this)">
             </div>
-            <!-- Row 5 -->
             <div class="custom-select-wrapper">
                 <div class="selected-text text-style-base" id="song-display-4">Select...</div>
                 <select class="hidden-select song-dropdown" data-index="4" onchange="handleSongSelect(this)">
                     <option value="" disabled selected>Select...</option>
                 </select>
-                <input type="number" class="mini-score-input" id="song-score-4" placeholder="Score" min="0" max="13333" onblur="finalizeSongScore(this)" onkeypress="handleScoreKey(event, this)">
+                <input type="number" class="mini-score-input" id="song-score-4" placeholder="Score" onblur="finalizeSongScore(this)" onkeypress="handleScoreKey(event, this)">
             </div>
         </div>
 
         <div class="score-wrapper">
-            <!-- Editable Input (Max 48) with Leading Zero Logic -->
-            <input type="text" 
-                   inputmode="numeric"
-                   class="score-input" 
-                   placeholder="##" 
-                   maxlength="2"
-                   oninput="validateScore(this)"
-                   onblur="formatScore(this)">
-            <!-- Static Text (Non-editable) -->
+            <input type="text" inputmode="numeric" class="score-input" placeholder="##" maxlength="2" oninput="validateScore(this)" onblur="formatScore(this)">
             <span class="score-static">/48</span>
         </div>
 
     </div>
 
     <script>
-        // --- DATA: Coaches and Songs ---
+        // --- DATA ---
         const coachData = [
-            { coach: "Claire", song: "Abracadabra P1" },
-            { coach: "Obscure", song: "Abracadabra P2" },
-            { coach: "Axen Diamonds", song: "Abracabra Extreme Version" },
-            { coach: "Spark", song: "All Star P1" },
-            { coach: "Dr. Gigavolt", song: "All Star P2" },
-            { coach: "Byte", song: "All Star P3" },
-            { coach: "Fluff", song: "All Star P4" },
-            { coach: "Thesea", song: "Anxiety" },
-            { coach: "Sky", song: "APT. P1" },
-            { coach: "Hitae", song: "APT. P2" },
-            { coach: "Rosie", song: "APT. Graffiti Version" },
-            { coach: "Sheeraz", song: "Azizam" },
-            { coach: "Chuck Ribbit", song: "Big Bad Frog" },
-            { coach: "Bluey Heeler", song: "Bluey Medley P1" },
-            { coach: "Bingo Heeler", song: "Bluey Medley P2" },
-            { coach: "Lizzy", song: "Born To Be Alive" },
-            { coach: "Stacey Step", song: "Born To Be Alive ALT P1" },
-            { coach: "Danny Dips", song: "Born To Be Alive ALT P2" },
-            { coach: "Naïa", song: "Chichika P1" },
-            { coach: "Solea", song: "Chichika P2" },
-            { coach: "Starseeker", song: "Counting Stars" },
-            { coach: "Lucine", song: "Cry Baby" },
-            { coach: "Isha", song: "Don Raja P1" },
-            { coach: "Zayo", song: "Don Raja P2" },
-            { coach: "Mira", song: "Don Raja P3" },
-            { coach: "Lulu", song: "Don't Go Breaking My Heart P1" },
-            { coach: "Levon", song: "Don't Go Breaking My Heart P2" },
-            { coach: "Cassia", song: "Drip P1" },
-            { coach: "Boom-B", song: "Drip P2" },
-            { coach: "Vineel", song: "Drip P3" },
-            { coach: "Ella Plush", song: "Feather" },
-            { coach: "Cindy", song: "Feather ALT P1" },
-            { coach: "Brandon", song: "Feather ALT P2" },
-            { coach: "Poppy", song: "Girls Just Want To Have Fun P1" },
-            { coach: "Jett", song: "Girls Just Want To Have Fun P2" },
-            { coach: "Julia", song: "Girls Just Want To Have Fun P3" },
-            { coach: "Elfie", song: "Girls Just Want To Have Fun Sporty Version" },
-            { coach: "Crunch", song: "Good Girls P1" },
-            { coach: "Munch", song: "Good Girls P2" },
-            { coach: "Phéa Nox", song: "Good Luck Babe" },
-            { coach: "Rose A. Lina", song: "Good Luck Babe Drag Version" },
-            { coach: "Mirage", song: "Houdini" },
-            { coach: "Keya", song: "Houdini - Extreme Version" },
-            { coach: "Ray", song: "Hung Up P1" },
-            { coach: "Sabrina", song: "Hung Up P2" },
-            { coach: "Sonny", song: "Hung Up P3" },
-            { coach: "Lucky Jack", song: "I Had Some Help" },
-            { coach: "Sylver", song: "It's Ok I'm Ok" },
-            { coach: "Kïto", song: "Kitipo P1" },
-            { coach: "Nëna", song: "Kitipo P2" },
-            { coach: "Berry Boots", song: "La Bamba P1" },
-            { coach: "Cheddar Cop", song: "La Bamba P2" },
-            { coach: "Choco Beats", song: "La Bamba P3" },
-            { coach: "Azurion", song: "Louder P1" },
-            { coach: "Selenia", song: "Louder P2" },
-            { coach: "Sally Mystic", song: "Love Again" },
-            { coach: "Zeta", song: "Messy" },
-            { coach: "Aileen-O", song: "Moonlight" },
-            { coach: "\"Human\" Vera", song: "Pop Muzik P1" },
-            { coach: "\"Human\" Zorgon", song: "Pop Muzik P2" },
-            { coach: "\"Human\" Marcia", song: "Pop Muzik P3 & Hung Up ALT" },
-            { coach: "Stonebeard", song: "Prehistorock" },
-            { coach: "Teddy Claus", song: "Rockin' Around The Christmas Tree" },
-            { coach: "Kyran", song: "Say Cheese" },
-            { coach: "VDVRT", song: "Show Me What You Got" },
-            { coach: "Sockkuru", song: "Sokusu" },
-            { coach: "Kaï", song: "Spin Your Love" },
-            { coach: "Nøkkja", song: "Strangers" },
-            { coach: "Dr. Vintz", song: "Thrift Shop" },
-            { coach: "Zéphéon", song: "Viva La Vida" },
-            { coach: "Shayza", song: "We Just Begun" },
-            { coach: "Revenant Rico", song: "Zombie Boy" }
+            { coach: "Claire", song: "Abracadabra P1" }, { coach: "Obscure", song: "Abracadabra P2" }, { coach: "Axen Diamonds", song: "Abracabra Extreme Version" }, { coach: "Spark", song: "All Star P1" }, { coach: "Dr. Gigavolt", song: "All Star P2" }, { coach: "Byte", song: "All Star P3" }, { coach: "Fluff", song: "All Star P4" }, { coach: "Thesea", song: "Anxiety" }, { coach: "Sky", song: "APT. P1" }, { coach: "Hitae", song: "APT. P2" }, { coach: "Rosie", song: "APT. Graffiti Version" }, { coach: "Sheeraz", song: "Azizam" }, { coach: "Chuck Ribbit", song: "Big Bad Frog" }, { coach: "Bluey Heeler", song: "Bluey Medley P1" }, { coach: "Bingo Heeler", song: "Bluey Medley P2" }, { coach: "Lizzy", song: "Born To Be Alive" }, { coach: "Stacey Step", song: "Born To Be Alive ALT P1" }, { coach: "Danny Dips", song: "Born To Be Alive ALT P2" }, { coach: "Naïa", song: "Chichika P1" }, { coach: "Solea", song: "Chichika P2" }, { coach: "Starseeker", song: "Counting Stars" }, { coach: "Lucine", song: "Cry Baby" }, { coach: "Isha", song: "Don Raja P1" }, { coach: "Zayo", song: "Don Raja P2" }, { coach: "Mira", song: "Don Raja P3" }, { coach: "Lulu", song: "Don't Go Breaking My Heart P1" }, { coach: "Levon", song: "Don't Go Breaking My Heart P2" }, { coach: "Cassia", song: "Drip P1" }, { coach: "Boom-B", song: "Drip P2" }, { coach: "Vineel", song: "Drip P3" }, { coach: "Ella Plush", song: "Feather" }, { coach: "Cindy", song: "Feather ALT P1" }, { coach: "Brandon", song: "Feather ALT P2" }, { coach: "Poppy", song: "Girls Just Want To Have Fun P1" }, { coach: "Jett", song: "Girls Just Want To Have Fun P2" }, { coach: "Julia", song: "Girls Just Want To Have Fun P3" }, { coach: "Elfie", song: "Girls Just Want To Have Fun Sporty Version" }, { coach: "Crunch", song: "Good Girls P1" }, { coach: "Munch", song: "Good Girls P2" }, { coach: "Phéa Nox", song: "Good Luck Babe" }, { coach: "Rose A. Lina", song: "Good Luck Babe Drag Version" }, { coach: "Mirage", song: "Houdini" }, { coach: "Keya", song: "Houdini - Extreme Version" }, { coach: "Ray", song: "Hung Up P1" }, { coach: "Sabrina", song: "Hung Up P2" }, { coach: "Sonny", song: "Hung Up P3" }, { coach: "Lucky Jack", song: "I Had Some Help" }, { coach: "Sylver", song: "It's Ok I'm Ok" }, { coach: "Kïto", song: "Kitipo P1" }, { coach: "Nëna", song: "Kitipo P2" }, { coach: "Berry Boots", song: "La Bamba P1" }, { coach: "Cheddar Cop", song: "La Bamba P2" }, { coach: "Choco Beats", song: "La Bamba P3" }, { coach: "Azurion", song: "Louder P1" }, { coach: "Selenia", song: "Louder P2" }, { coach: "Sally Mystic", song: "Love Again" }, { coach: "Zeta", song: "Messy" }, { coach: "Aileen-O", song: "Moonlight" }, { coach: "\"Human\" Vera", song: "Pop Muzik P1" }, { coach: "\"Human\" Zorgon", song: "Pop Muzik P2" }, { coach: "\"Human\" Marcia", song: "Pop Muzik P3 & Hung Up ALT" }, { coach: "Stonebeard", song: "Prehistorock" }, { coach: "Teddy Claus", song: "Rockin' Around The Christmas Tree" }, { coach: "Kyran", song: "Say Cheese" }, { coach: "VDVRT", song: "Show Me What You Got" }, { coach: "Sockkuru", song: "Sokusu" }, { coach: "Kaï", song: "Spin Your Love" }, { coach: "Nøkkja", song: "Strangers" }, { coach: "Dr. Vintz", song: "Thrift Shop" }, { coach: "Zéphéon", song: "Viva La Vida" }, { coach: "Shayza", song: "We Just Begun" }, { coach: "Revenant Rico", song: "Zombie Boy" }
         ];
 
         const songData = [
             "Abracadabra", "Abracadabra - Extreme Version", "All Star", "Anxiety", "APT", "APT - Graffiti Version", "Azizam", "Big Bad Frog", "Bluey Medley", "Born To Be Alive", "Born To Be Alive - Aerobics Version", "Chichika", "Counting Stars", "Cry baby", "Don Raja", "Don't Go Breaking My Heart", "Drip", "Feather", "Feather - Parachute Version", "Girls Just Want To Have Fun", "Girls Just Want To Have Fun - Sporty Version", "Good Girls", "Good Luck Babe", "Good Luck Babe - Drag Version", "Houdini", "Houdini - Extreme Version", "Hung Up", "Hung Up - Cosmic Fitness Version", "I Had Some Help", "It's Ok I'm Ok", "Kitipo", "La Bamba", "Louder", "Love Again", "Messy", "Moonlight", "Pop Muzik", "Prehistorock", "Rockin' Around The Christmas Tree", "Say Cheese", "Show Me What You Got", "Sokusu", "Spin Your Love", "Strangers", "Thrift Shop", "Viva La Vida", "We Just Begun", "Zombieboy"
         ];
 
-        // Initialize lists
+        let currentWidth = 0;
+
+        function setFixedDimensions() {
+            // LOCK THE LAYOUT:
+            // Calculate pixel dimensions ONCE based on current window state.
+            const vh = window.innerHeight;
+            const vw = window.innerWidth;
+
+            // Target Height: 85% of screen
+            let cardHeight = vh * 0.85;
+            // Target Width: 9:16 aspect ratio based on height
+            let cardWidth = cardHeight * (9/16);
+
+            // If card is wider than screen (minus padding), scale down by width
+            if (cardWidth > vw * 0.9) {
+                cardWidth = vw * 0.9;
+                cardHeight = cardWidth * (16/9);
+            }
+
+            // Apply fixed pixels
+            const card = document.getElementById('main-card');
+            card.style.width = `${cardWidth}px`;
+            card.style.height = `${cardHeight}px`;
+            
+            // Remember width to detect ROTATION (ignore scrolling)
+            currentWidth = vw;
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
             const coachSelects = document.querySelectorAll('.coach-dropdown');
             const songSelects = document.querySelectorAll('.song-dropdown');
             
-            // Populate Coaches
             coachData.sort((a, b) => a.coach.localeCompare(b.coach));
             coachSelects.forEach(select => {
                 coachData.forEach(item => {
@@ -446,7 +362,6 @@
                 });
             });
 
-            // Populate Songs
             songData.sort(); 
             songSelects.forEach(select => {
                 songData.forEach(song => {
@@ -456,23 +371,50 @@
                     select.appendChild(option);
                 });
             });
+
+            // Set Initial Layout Lock
+            setFixedDimensions();
+            triggerResize();
         });
 
-        // TEXT RESIZING LOGIC
+        // SMART RESIZE:
+        // Only trigger layout update if WIDTH changes (Rotation).
+        // Vertical scrolling (address bar showing/hiding) will be IGNORED.
+        window.addEventListener('resize', () => {
+            if (window.innerWidth !== currentWidth) {
+                setFixedDimensions();
+            }
+        });
+
+        function triggerResize() {
+            document.querySelectorAll('.selected-text').forEach(el => {
+                if (el.textContent !== 'Select...') fitText(el);
+            });
+        }
+
+        // --- STABLE CHARACTER COUNT RESIZER ---
+        // Refined breakpoints for cleaner stacking
         function fitText(element) {
-            // Reset to base size first
-            element.style.fontSize = '0.8rem';
+            if (!element) return;
             
-            const len = element.textContent.length;
-            // Thresholds for shrinking
-            if (len > 30) {
-                element.style.fontSize = '0.55rem';
-            } else if (len > 22) {
-                element.style.fontSize = '0.65rem';
+            const target = element.querySelector('.song-line') || element;
+            const text = target.textContent || "";
+            const len = text.length;
+
+            target.style.letterSpacing = 'normal';
+
+            if (len < 10) {
+                target.style.fontSize = '13px'; 
+            } else if (len < 18) {
+                target.style.fontSize = '11px'; 
+            } else if (len < 25) {
+                target.style.fontSize = '10px'; 
+            } else {
+                target.style.fontSize = '9px'; 
+                target.style.letterSpacing = '-0.5px'; 
             }
         }
 
-        // Left Column: Update text and resize
         function updateDisplay(selectElement) {
             const index = selectElement.getAttribute('data-index');
             const displayDiv = document.getElementById(`display-${index}`);
@@ -482,30 +424,25 @@
             }
         }
 
-        // Right Column: Song Selected -> Show Score Input + Resize Text
         function handleSongSelect(selectElement) {
             const index = selectElement.getAttribute('data-index');
             const displayDiv = document.getElementById(`song-display-${index}`);
             const inputElement = document.getElementById(`song-score-${index}`);
             
             if (selectElement.value) {
-                // Update display to just the song name for now
-                displayDiv.textContent = selectElement.value;
+                // Initialize with Stacked Layout HTML
+                displayDiv.innerHTML = `<span class="song-line">${selectElement.value}</span>`;
                 fitText(displayDiv);
                 
-                // Show the input field
                 inputElement.style.display = 'block';
-                inputElement.value = ''; // Reset value
+                inputElement.value = ''; 
                 inputElement.focus();
             }
         }
 
-        // Right Column: Score Input Blur -> Finalize + Resize Text
         function finalizeSongScore(inputElement) {
-            // Validate value
             let val = parseInt(inputElement.value);
             if (inputElement.value === '') {
-                // If empty, hide input and keep just song name
                 inputElement.style.display = 'none';
                 return;
             }
@@ -513,34 +450,30 @@
             if (isNaN(val) || val < 0) val = 0;
             if (val > 13333) val = 13333;
 
-            // Get current song name from the select
             const index = inputElement.id.split('-')[2];
             const selectElement = document.querySelector(`.song-dropdown[data-index="${index}"]`);
             const displayDiv = document.getElementById(`song-display-${index}`);
             
             if (selectElement.value) {
-                // Update text to "Song Name - Score"
-                displayDiv.textContent = `${selectElement.value} - ${val}`;
+                // INJECT STACKED HTML
+                displayDiv.innerHTML = `
+                    <span class="song-line">${selectElement.value}</span>
+                    <span class="score-line">${val}</span>
+                `;
                 fitText(displayDiv);
             }
 
-            // Hide the input
             inputElement.style.display = 'none';
         }
 
-        // Allow Enter key to finish input
         function handleScoreKey(event, inputElement) {
             if (event.key === 'Enter') {
                 inputElement.blur();
             }
         }
 
-        // --- SCORE INPUT LOGIC (Bottom Left) ---
         function validateScore(input) {
-            // Remove non-numeric characters
             input.value = input.value.replace(/[^0-9]/g, '');
-            
-            // Check max value
             let val = parseInt(input.value);
             if (!isNaN(val) && val > 48) {
                 input.value = 48;
@@ -549,15 +482,10 @@
 
         function formatScore(input) {
             if (input.value === '') return;
-            
             let val = parseInt(input.value);
             if (isNaN(val)) return;
-
-            // Enforce limits again just in case
             if (val > 48) val = 48;
             if (val < 0) val = 0;
-
-            // Pad with zero if single digit (0-9 -> 00-09)
             if (val < 10) {
                 input.value = '0' + val;
             } else {
@@ -565,7 +493,6 @@
             }
         }
 
-        // --- Standard Logic (Image Upload & Settings) ---
         function loadCover(event) {
             const input = event.target;
             const preview = document.getElementById('preview-image');
