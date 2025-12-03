@@ -357,7 +357,8 @@
             const coachSelects = document.querySelectorAll('.coach-dropdown');
             const songSelects = document.querySelectorAll('.song-dropdown');
             
-            coachData.sort((a, b) => a.coach.localeCompare(b.coach));
+            // REMOVED THE SORTING LINE HERE to keep original list order
+            
             coachSelects.forEach(select => {
                 coachData.forEach(item => {
                     const option = document.createElement('option');
