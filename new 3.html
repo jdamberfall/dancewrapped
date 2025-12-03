@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Just Dance Wrapped 2026</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');
+
+        :root {
+            /* PERMANENT BACKGROUND LINK */
+            --bg-image: url('https://i.postimg.cc/C5y5X93V/dancewrapped-template.png'); 
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #1a0b2e;
+            font-family: 'Montserrat', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* The Container */
+        .card-container {
+            position: relative;
+            width: 100%;
+            max-width: 450px; 
+            aspect-ratio: 9 / 16;
+            background-color: #2d1b4e; /* Fallback color */
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            overflow: hidden;
+        }
+
+        /* --- LAYER 1: The Uploaded Cover Art (Bottom) --- */
+        .cover-art-display {
+            position: absolute;
+            top: 9.3%;
+            left: 20.5%;
+            width: 59%;
+            height: 33.2%;
+            object-fit: cover;
+            display: none; /* Hidden until image selected */
+            z-index: 1; /* Lowest level */
+        }
+
+        /* --- LAYER 2: The Template Overlay (Middle) --- */
+        .template-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: var(--bg-image);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: 10; /* Sits on top of cover art */
+            pointer-events: none; /* Allows clicks to pass through to inputs */
+        }
+
+        /* --- LAYER 3: Interactive Elements (Top) --- */
+        
+        /* Cover Art Click Zone (Invisible but clickable) */
+        .image-upload-zone {
+            position: absolute;
+            top: 9.3%;
+            left: 20.5%;
+            width: 59%;
+            height: 33.2%;
+            background-color: transparent; 
+            cursor: pointer;
+            z-index: 20; /* Highest level for interaction */
+        }
+
+        .image-upload-zone:hover {
+            /* Optional: Visual cue when hovering over the zone */
+            background-color: rgba(255, 255, 255, 0.05); 
+        }
+
+        .image-upload-zone input[type="file"] { display: none; }
+
+        /* Lists Containers */
+        .left-list-container {
+            position: absolute;
+            top: 58.5%; 
+            left: 5%; 
+            width: 44%; 
+            height: 18.5%; 
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 20;
+        }
+
+        .right-list-container {
+            position: absolute;
+            top: 59.0%; 
+            right: 5%; 
+            width: 44%;
+            height: 17%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 20;
+        }
+
+        /* Styles for text/inputs */
+        .text-style-base {
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800; 
+            font-size: 0.8rem; 
+            line-height: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .jd-select {
+            width: 100%;
+            background: transparent;
+            border: none;
+            padding: 0;
+            padding-left: 25px; 
+            outline: none;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+        .jd-select:hover { text-decoration: underline; text-decoration-thickness: 2px; text-decoration-color: rgba(255,255,255,0.3); }
+        .jd-select option { background-color: #1a0b2e; font-weight: normal; }
+
+        .custom-select-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .selected-text {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding-left: 25px; 
+            pointer-events: none; 
+            z-index: 1;
+        }
+
+        .hidden-select {
+            position: relative;
+            width: 100%;
+            opacity: 0; 
+            cursor: pointer;
+            z-index: 2;
+            padding: 0;
+            margin: 0;
+            appearance: none;
+            -webkit-appearance: none;
+            border: none;
+            background: transparent;
+        }
+
+        /* Score Input */
+        .score-wrapper {
+            position: absolute;
+            bottom: 11%;
+            left: 5%;
+            display: flex;
+            align-items: baseline; 
+            z-index: 20;
+        }
+
+        .score-input {
+            width: 65px; 
+            background: transparent;
+            border: none;
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            font-size: 2.5rem; 
+            text-align: right; 
+            padding: 0;
+            margin-right: 0; 
+            outline: none;
+        }
+        
+        .score-static {
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            font-size: 2.5rem; 
+            margin-left: 2px;
+            pointer-events: none; 
+        }
+
+        .score-input:hover, .score-input:focus {
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+        }
+        .score-input::placeholder { color: rgba(255,255,255,0.3); }
+
+        /* Settings Gear */
+        .settings-gear {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+            color: rgba(255,255,255,0.3);
+            cursor: pointer;
+            z-index: 100;
+            transition: opacity 0.3s;
+        }
+        .settings-gear:hover { opacity: 1; }
+
+        .modal {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(20, 10, 40, 0.95);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.2);
+            z-index: 200;
+            width: 80%;
+            text-align: center;
+            color: white;
+        }
+        .modal input[type="text"] { width: 90%; padding: 8px; margin: 10px 0; border-radius: 4px; border: none; }
+        .modal button { padding: 8px 15px; background: #6a0dad; border: none; color: white; border-radius: 4px; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="card-container" id="main-card">
+        
+        <div class="settings-gear" onclick="toggleModal()">⚙</div>
+
+        <div id="settings-modal" class="modal">
+            <h3>Fix Background</h3>
+            <p style="font-size: 0.8rem; opacity: 0.8;">If the background is missing, paste a new link below or upload the file.</p>
+            <input type="text" id="bg-url-input" placeholder="Paste Image Link Here...">
+            <br><p style="margin: 5px 0;">- OR -</p>
+            <input type="file" id="bg-file-input" accept="image/*" onchange="loadBackgroundFromFile(event)" style="color:white; font-size: 0.8rem;">
+            <br><br><button onclick="saveBackground()">Save & Close</button>
+        </div>
+
+        <!-- LAYER 1: Cover Art (Behind Template) -->
+        <img id="preview-image" class="cover-art-display">
+
+        <!-- LAYER 2: Template Overlay -->
+        <div class="template-layer" id="template-layer"></div>
+
+        <!-- LAYER 3: Interactive Elements (Top) -->
+        <label class="image-upload-zone" title="Click to upload image">
+            <input type="file" accept="image/*" onchange="loadCover(event)">
+        </label>
+
+        <!-- LEFT COLUMN: Favorite Coaches -->
+        <div class="left-list-container">
+            <div class="custom-select-wrapper">
+                <div class="selected-text text-style-base" id="display-0">Select...</div>
+                <select class="hidden-select coach-dropdown" data-index="0" onchange="updateDisplay(this)">
+                    <option value="" disabled selected>Select...</option>
+                </select>
+            </div>
+            <div class="custom-select-wrapper">
+                <div class="selected-text text-style-base" id="display-1">Select...</div>
+                <select class="hidden-select coach-dropdown" data-index="1" onchange="updateDisplay(this)">
+                    <option value="" disabled selected>Select...</option>
+                </select>
+            </div>
+            <div class="custom-select-wrapper">
+                <div class="selected-text text-style-base" id="display-2">Select...</div>
+                <select class="hidden-select coach-dropdown" data-index="2" onchange="updateDisplay(this)">
+                    <option value="" disabled selected>Select...</option>
+                </select>
+            </div>
+            <div class="custom-select-wrapper">
+                <div class="selected-text text-style-base" id="display-3">Select...</div>
+                <select class="hidden-select coach-dropdown" data-index="3" onchange="updateDisplay(this)">
+                    <option value="" disabled selected>Select...</option>
+                </select>
+            </div>
+            <div class="custom-select-wrapper">
+                <div class="selected-text text-style-base" id="display-4">Select...</div>
+                <select class="hidden-select coach-dropdown" data-index="4" onchange="updateDisplay(this)">
+                    <option value="" disabled selected>Select...</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: Top Scores -->
+        <div class="right-list-container">
+            <select class="jd-select text-style-base song-dropdown"><option value="" disabled selected>Select...</option></select>
+            <select class="jd-select text-style-base song-dropdown"><option value="" disabled selected>Select...</option></select>
+            <select class="jd-select text-style-base song-dropdown"><option value="" disabled selected>Select...</option></select>
+            <select class="jd-select text-style-base song-dropdown"><option value="" disabled selected>Select...</option></select>
+            <select class="jd-select text-style-base song-dropdown"><option value="" disabled selected>Select...</option></select>
+        </div>
+
+        <div class="score-wrapper">
+            <!-- Editable Input (Max 48) with Leading Zero Logic -->
+            <input type="text" 
+                   inputmode="numeric"
+                   class="score-input" 
+                   placeholder="##" 
+                   maxlength="2"
+                   oninput="validateScore(this)"
+                   onblur="formatScore(this)">
+            <!-- Static Text (Non-editable) -->
+            <span class="score-static">/48</span>
+        </div>
+
+    </div>
+
+    <script>
+        // --- DATA: Coaches and Songs ---
+        const coachData = [
+            { coach: "Claire", song: "Abracadabra P1" },
+            { coach: "Obscure", song: "Abracadabra P2" },
+            { coach: "Axen Diamonds", song: "Abracabra Extreme Version" },
+            { coach: "Spark", song: "All Star P1" },
+            { coach: "Dr. Gigavolt", song: "All Star P2" },
+            { coach: "Byte", song: "All Star P3" },
+            { coach: "Fluff", song: "All Star P4" },
+            { coach: "Thesea", song: "Anxiety" },
+            { coach: "Sky", song: "APT. P1" },
+            { coach: "Hitae", song: "APT. P2" },
+            { coach: "Rosie", song: "APT. Graffiti Version" },
+            { coach: "Sheeraz", song: "Azizam" },
+            { coach: "Chuck Ribbit", song: "Big Bad Frog" },
+            { coach: "Bluey Heeler", song: "Bluey Medley P1" },
+            { coach: "Bingo Heeler", song: "Bluey Medley P2" },
+            { coach: "Lizzy", song: "Born To Be Alive" },
+            { coach: "Stacey Step", song: "Born To Be Alive ALT P1" },
+            { coach: "Danny Dips", song: "Born To Be Alive ALT P2" },
+            { coach: "Naïa", song: "Chichika P1" },
+            { coach: "Solea", song: "Chichika P2" },
+            { coach: "Starseeker", song: "Counting Stars" },
+            { coach: "Lucine", song: "Cry Baby" },
+            { coach: "Isha", song: "Don Raja P1" },
+            { coach: "Zayo", song: "Don Raja P2" },
+            { coach: "Mira", song: "Don Raja P3" },
+            { coach: "Lulu", song: "Don't Go Breaking My Heart P1" },
+            { coach: "Levon", song: "Don't Go Breaking My Heart P2" },
+            { coach: "Cassia", song: "Drip P1" },
+            { coach: "Boom-B", song: "Drip P2" },
+            { coach: "Vineel", song: "Drip P3" },
+            { coach: "Ella Plush", song: "Feather" },
+            { coach: "Cindy", song: "Feather ALT P1" },
+            { coach: "Brandon", song: "Feather ALT P2" },
+            { coach: "Poppy", song: "Girls Just Want To Have Fun P1" },
+            { coach: "Jett", song: "Girls Just Want To Have Fun P2" },
+            { coach: "Julia", song: "Girls Just Want To Have Fun P3" },
+            { coach: "Elfie", song: "Girls Just Want To Have Fun Sporty Version" },
+            { coach: "Crunch", song: "Good Girls P1" },
+            { coach: "Munch", song: "Good Girls P2" },
+            { coach: "Phéa Nox", song: "Good Luck Babe" },
+            { coach: "Rose A. Lina", song: "Good Luck Babe Drag Version" },
+            { coach: "Mirage", song: "Houdini" },
+            { coach: "Keya", song: "Houdini - Extreme Version" },
+            { coach: "Ray", song: "Hung Up P1" },
+            { coach: "Sabrina", song: "Hung Up P2" },
+            { coach: "Sonny", song: "Hung Up P3" },
+            { coach: "Lucky Jack", song: "I Had Some Help" },
+            { coach: "Sylver", song: "It's Ok I'm Ok" },
+            { coach: "Kïto", song: "Kitipo P1" },
+            { coach: "Nëna", song: "Kitipo P2" },
+            { coach: "Berry Boots", song: "La Bamba P1" },
+            { coach: "Cheddar Cop", song: "La Bamba P2" },
+            { coach: "Choco Beats", song: "La Bamba P3" },
+            { coach: "Azurion", song: "Louder P1" },
+            { coach: "Selenia", song: "Louder P2" },
+            { coach: "Sally Mystic", song: "Love Again" },
+            { coach: "Zeta", song: "Messy" },
+            { coach: "Aileen-O", song: "Moonlight" },
+            { coach: "\"Human\" Vera", song: "Pop Muzik P1" },
+            { coach: "\"Human\" Zorgon", song: "Pop Muzik P2" },
+            { coach: "\"Human\" Marcia", song: "Pop Muzik P3 & Hung Up ALT" },
+            { coach: "Stonebeard", song: "Prehistorock" },
+            { coach: "Teddy Claus", song: "Rockin' Around The Christmas Tree" },
+            { coach: "Kyran", song: "Say Cheese" },
+            { coach: "VDVRT", song: "Show Me What You Got" },
+            { coach: "Sockkuru", song: "Sokusu" },
+            { coach: "Kaï", song: "Spin Your Love" },
+            { coach: "Nøkkja", song: "Strangers" },
+            { coach: "Dr. Vintz", song: "Thrift Shop" },
+            { coach: "Zéphéon", song: "Viva La Vida" },
+            { coach: "Shayza", song: "We Just Begun" },
+            { coach: "Revenant Rico", song: "Zombie Boy" }
+        ];
+
+        const songData = [
+            "Abracadabra", "Abracadabra - Extreme Version", "All Star", "Anxiety", "APT", "APT - Graffiti Version", "Azizam", "Big Bad Frog", "Bluey Medley", "Born To Be Alive", "Born To Be Alive - Aerobics Version", "Chichika", "Counting Stars", "Cry baby", "Don Raja", "Don't Go Breakin My Heart", "Drip", "Feather", "Feather - Parachute Version", "Girls Just Want To Have Fun", "Girls Just Want To Have Fun - Sporty Version", "Good Girls", "Good Luck Babe", "Good Luck Babe - Drag Version", "Houdini", "Houdini - Extreme Version", "Hung Up", "Hung Up - Cosmic Fitness Version", "I Had Some Help", "It's Ok I'm Ok", "Kitipo", "La Bamba", "Louder", "Love Again", "Messy", "Moonlight", "Pop Muzik", "Prehistorock", "Rockin' Around The Christmas Tree", "Say Cheese", "Show Me What You Got", "Sokusu", "Spin Your Love", "Strangers", "Thrift Shop", "Viva La Vida", "We Just Begun", "Zombieboy"
+        ];
+
+        // Initialize lists
+        window.addEventListener('DOMContentLoaded', () => {
+            const coachSelects = document.querySelectorAll('.coach-dropdown');
+            const songSelects = document.querySelectorAll('.song-dropdown');
+            
+            coachData.sort((a, b) => a.coach.localeCompare(b.coach));
+            coachSelects.forEach(select => {
+                coachData.forEach(item => {
+                    const option = document.createElement('option');
+                    option.textContent = `${item.coach} (${item.song})`;
+                    option.value = item.coach;
+                    select.appendChild(option);
+                });
+            });
+
+            songData.sort(); 
+            songSelects.forEach(select => {
+                songData.forEach(song => {
+                    const option = document.createElement('option');
+                    option.textContent = song;
+                    option.value = song;
+                    select.appendChild(option);
+                });
+            });
+        });
+
+        function updateDisplay(selectElement) {
+            const index = selectElement.getAttribute('data-index');
+            const displayDiv = document.getElementById(`display-${index}`);
+            if (selectElement.value) {
+                displayDiv.textContent = selectElement.value;
+            }
+        }
+
+        // --- SCORE INPUT LOGIC ---
+        function validateScore(input) {
+            // Remove non-numeric characters
+            input.value = input.value.replace(/[^0-9]/g, '');
+            
+            // Check max value
+            let val = parseInt(input.value);
+            if (!isNaN(val) && val > 48) {
+                input.value = 48;
+            }
+        }
+
+        function formatScore(input) {
+            if (input.value === '') return;
+            
+            let val = parseInt(input.value);
+            if (isNaN(val)) return;
+
+            // Enforce limits again just in case
+            if (val > 48) val = 48;
+            if (val < 0) val = 0;
+
+            // Pad with zero if single digit (0-9 -> 00-09)
+            if (val < 10) {
+                input.value = '0' + val;
+            } else {
+                input.value = val.toString();
+            }
+        }
+
+        // --- Standard Logic (Image Upload & Settings) ---
+        function loadCover(event) {
+            const input = event.target;
+            const preview = document.getElementById('preview-image');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        const modal = document.getElementById('settings-modal');
+        const card = document.getElementById('main-card');
+        const templateLayer = document.getElementById('template-layer');
+        const urlInput = document.getElementById('bg-url-input');
+
+        function toggleModal() {
+            modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function saveBackground() {
+            const newUrl = urlInput.value.trim();
+            if (newUrl) {
+                // Update the TEMPLATE layer, not the card background
+                templateLayer.style.backgroundImage = `url('${newUrl}')`;
+            }
+            toggleModal();
+        }
+
+        function loadBackgroundFromFile(event) {
+            const input = event.target;
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // Update the TEMPLATE layer, not the card background
+                    templateLayer.style.backgroundImage = `url('${e.target.result}')`;
+                    urlInput.value = ''; 
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+</body>
+</html>
