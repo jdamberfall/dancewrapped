@@ -29,21 +29,27 @@
         .card-container {
             position: relative;
             
-            /* SIZING FIX: 
-               1. Aspect Ratio drives the shape.
-               2. max-height: 82dvh ensures it never touches the top/bottom bars.
-               3. width: auto allows it to shrink to fit that height.
+            /* SIZING FIX (REVISED): 
+               This setup guarantees the box NEVER distorts from 9:16.
             */
             aspect-ratio: 9 / 16;
-            height: auto;
-            max-height: 82dvh; 
+            
+            /* 1. Try to fill the width */
             width: 100%;
-            max-width: 450px; /* Desktop constraint */
+            height: auto;
+            
+            /* 2. BUT, don't let the height exceed 85% of the screen (for bezels/bars) */
+            max-height: 85dvh;
+            
+            /* 3. CRITICAL: If height hits 85dvh, cap the width so ratio doesn't break. 
+                  (85dvh * 9/16 calculates the matching width for that max height) */
+            max-width: calc(85dvh * (9/16));
             
             background-color: #2d1b4e; 
             box-shadow: 0 0 40px rgba(0,0,0,0.8);
-            border-radius: 8px; /* Slight rounding looks better when floating */
+            border-radius: 8px; 
             overflow: hidden;
+            margin: auto; /* Ensures it stays centered if width gets clamped */
         }
 
         /* --- LAYER 1: The Uploaded Cover Art (Bottom) --- */
