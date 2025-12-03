@@ -8,7 +8,8 @@
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');
 
         :root {
-            --bg-image: url('https://i.postimg.cc/C5y5X93V/dancewrapped-template.png'); 
+            /* Your provided template image */
+            --bg-image: url('https://i.postimg.cc/XJYXNxpq/newtemplate.png'); 
         }
 
         body {
@@ -34,13 +35,14 @@
         }
 
         /* --- LAYER 1: Cover Art --- */
+        /* FIXED: Now matches the image-upload-zone dimensions exactly */
         .cover-art-display {
             position: absolute;
-            top: 9.3%;
-            left: 20.5%;
-            width: 59%;
-            height: 33.2%;
-            object-fit: cover;
+            top: 4%;
+            left: 21%;
+            width: 70%;
+            height: 39.5%;
+            object-fit: cover; /* Fills the area */
             display: none; 
             z-index: 1; 
         }
@@ -61,12 +63,13 @@
         }
 
         /* --- LAYER 3: Interactive --- */
+        /* Upload zone matches the image area so you can click anywhere in the top half */
         .image-upload-zone {
             position: absolute;
-            top: 9.3%;
-            left: 20.5%;
-            width: 59%;
-            height: 33.2%;
+            top: 4%;
+            left: 21%;    
+            width: 70%;   
+            height: 39.5%;
             background-color: transparent; 
             cursor: pointer;
             z-index: 20; 
@@ -80,25 +83,24 @@
         /* --- GRID LIST CONTAINERS --- */
         .left-list-container, .right-list-container {
             position: absolute;
-            width: 44%; 
+            top: 52.5%;      
+            height: 21%;     
             display: grid;
             grid-template-rows: repeat(5, 1fr); /* 5 Equal Slots */
             align-items: center; 
             z-index: 20;
         }
 
-        /* Adjusted to maximize vertical space for both columns */
+        /* Left Column (Coaches) */
         .left-list-container {
-            top: 58.5%; 
-            left: 5%; 
-            height: 18.5%; 
+            left: 12%;      
+            width: 40%; 
         }
 
+        /* Right Column (Scores) */
         .right-list-container {
-            /* CHANGED: Match left container exactly to give more room */
-            top: 58.5%; 
-            right: 5%; 
-            height: 18.5%; 
+            left: 58%;      
+            width: 38%; 
         }
 
         .custom-select-wrapper {
@@ -108,7 +110,6 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            /* CRITICAL: Prevents one song from bleeding into the next */
             overflow: hidden; 
         }
 
@@ -117,11 +118,11 @@
             color: white;
             font-family: 'Montserrat', sans-serif;
             font-weight: 800; 
-            font-size: 12px; /* Reduced base size slightly */
-            /* Tight line height is crucial for stacking on mobile */
+            font-size: 13px; 
             line-height: 0.95; 
             white-space: nowrap;
             overflow: hidden; 
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5); 
         }
 
         /* Stacked Layout Styles */
@@ -129,20 +130,21 @@
             display: block;
             width: 100%;
             white-space: nowrap;
-            margin-bottom: 0px; /* Removed gap completely */
+            margin-bottom: 0px; 
         }
         
         .score-line {
             display: block;
-            font-size: 9px; /* Reduced from 10px to fit better */
+            font-size: 10px; 
             opacity: 0.9;
             font-weight: 700;
+            color: #e0e0e0;
         }
 
         .selected-text {
             position: relative; 
             width: 100%;
-            padding-left: 25px; 
+            padding-left: 5px; 
             pointer-events: none; 
             z-index: 1;
             box-sizing: border-box; 
@@ -165,8 +167,8 @@
             right: 0;
             top: 50%;
             transform: translateY(-50%);
-            width: 60px;
-            height: 1.2rem;
+            width: 50px;
+            height: 1.1rem;
             background-color: rgba(26, 11, 46, 0.95);
             border: 1px solid rgba(255, 255, 255, 0.5);
             color: white;
@@ -180,37 +182,39 @@
             outline: none;
         }
         
-        /* Global Score */
+        /* Global Score (Megastars) */
         .score-wrapper {
             position: absolute;
-            bottom: 8.8%;
-            left: 5%;
+            top: 76.5%;     
+            left: 8%;
             display: flex;
             align-items: baseline; 
             z-index: 20;
         }
 
         .score-input {
-            width: 65px; 
+            width: 45px; /* Reduced width to close the gap */
             background: transparent;
             border: none;
             color: white;
             font-family: 'Montserrat', sans-serif;
             font-weight: 900;
-            font-size: 2.5rem; 
-            text-align: right; 
+            font-size: 1.8rem; 
+            text-align: left; 
             padding: 0;
             margin-right: 0; 
             outline: none;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
         
         .score-static {
             color: white;
             font-family: 'Montserrat', sans-serif;
             font-weight: 900;
-            font-size: 2.5rem; 
-            margin-left: 2px;
+            font-size: 1.8rem; 
+            margin-left: 0px; /* Added 'px' so it actually moves */
             pointer-events: none; 
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
         
         input::-webkit-outer-spin-button,
