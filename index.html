@@ -87,7 +87,7 @@
             z-index: 20;
         }
 
-        /* Slightly tweaked heights/tops to maximize space without misaligning */
+        /* Adjusted to maximize vertical space for both columns */
         .left-list-container {
             top: 58.5%; 
             left: 5%; 
@@ -95,9 +95,10 @@
         }
 
         .right-list-container {
-            top: 59%; 
+            /* CHANGED: Match left container exactly to give more room */
+            top: 58.5%; 
             right: 5%; 
-            height: 18%;
+            height: 18.5%; 
         }
 
         .custom-select-wrapper {
@@ -116,7 +117,7 @@
             color: white;
             font-family: 'Montserrat', sans-serif;
             font-weight: 800; 
-            font-size: 13px;
+            font-size: 12px; /* Reduced base size slightly */
             /* Tight line height is crucial for stacking on mobile */
             line-height: 0.95; 
             white-space: nowrap;
@@ -128,12 +129,12 @@
             display: block;
             width: 100%;
             white-space: nowrap;
-            margin-bottom: 1px; /* Tiny gap */
+            margin-bottom: 0px; /* Removed gap completely */
         }
         
         .score-line {
             display: block;
-            font-size: 10px; /* Small fixed size for score */
+            font-size: 9px; /* Reduced from 10px to fit better */
             opacity: 0.9;
             font-weight: 700;
         }
@@ -182,7 +183,7 @@
         /* Global Score */
         .score-wrapper {
             position: absolute;
-            bottom: 12.8%;
+            bottom: 10.8%;
             left: 5%;
             display: flex;
             align-items: baseline; 
@@ -403,8 +404,9 @@
 
             target.style.letterSpacing = 'normal';
 
+            // REDUCED FONT SIZES slightly to prevent clipping in stacked mode
             if (len < 10) {
-                target.style.fontSize = '13px'; 
+                target.style.fontSize = '12px'; // Reduced from 13px
             } else if (len < 18) {
                 target.style.fontSize = '11px'; 
             } else if (len < 25) {
