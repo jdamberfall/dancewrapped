@@ -20,17 +20,29 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
+            /* Use dvh (Dynamic Viewport Height) to account for mobile address bars */
+            min-height: 100dvh; 
+            overflow: hidden; /* Prevents scrolling if possible */
         }
 
         /* The Container */
         .card-container {
             position: relative;
-            width: 100%;
-            max-width: 450px; 
+            
+            /* SIZING FIX: 
+               1. Aspect Ratio drives the shape.
+               2. max-height: 82dvh ensures it never touches the top/bottom bars.
+               3. width: auto allows it to shrink to fit that height.
+            */
             aspect-ratio: 9 / 16;
-            background-color: #2d1b4e; /* Fallback color */
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            height: auto;
+            max-height: 82dvh; 
+            width: 100%;
+            max-width: 450px; /* Desktop constraint */
+            
+            background-color: #2d1b4e; 
+            box-shadow: 0 0 40px rgba(0,0,0,0.8);
+            border-radius: 8px; /* Slight rounding looks better when floating */
             overflow: hidden;
         }
 
@@ -42,8 +54,8 @@
             width: 59%;
             height: 33.2%;
             object-fit: cover;
-            display: none; /* Hidden until image selected */
-            z-index: 1; /* Lowest level */
+            display: none; 
+            z-index: 1; 
         }
 
         /* --- LAYER 2: The Template Overlay (Middle) --- */
@@ -57,13 +69,13 @@
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            z-index: 10; /* Sits on top of cover art */
-            pointer-events: none; /* Allows clicks to pass through to inputs */
+            z-index: 10; 
+            pointer-events: none; 
         }
 
         /* --- LAYER 3: Interactive Elements (Top) --- */
         
-        /* Cover Art Click Zone (Invisible but clickable) */
+        /* Cover Art Click Zone */
         .image-upload-zone {
             position: absolute;
             top: 9.3%;
@@ -72,12 +84,12 @@
             height: 33.2%;
             background-color: transparent; 
             cursor: pointer;
-            z-index: 20; /* Highest level for interaction */
+            z-index: 20; 
         }
 
         .image-upload-zone:hover {
-            /* Optional: Visual cue when hovering over the zone */
-            background-color: rgba(255, 255, 255, 0.05); 
+            background-color: rgba(255, 255, 255, 0.1);
+            outline: 2px dashed rgba(255,255,255,0.3);
         }
 
         .image-upload-zone input[type="file"] { display: none; }
@@ -97,10 +109,14 @@
 
         .right-list-container {
             position: absolute;
-            top: 59.0%; 
+            /* ALIGNMENT FIX: 
+               - Top: 59% (Starts them just right relative to the '1')
+               - Height: 19% (Spreads them out enough to hit the '5' without going over)
+            */
+            top: 59%; 
             right: 5%; 
             width: 44%;
-            height: 17%;
+            height: 18%;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -119,23 +135,12 @@
             text-overflow: ellipsis;
         }
 
-        .jd-select {
-            width: 100%;
-            background: transparent;
-            border: none;
-            padding: 0;
-            padding-left: 25px; 
-            outline: none;
-            cursor: pointer;
-            appearance: none;
-            -webkit-appearance: none;
-        }
-        .jd-select:hover { text-decoration: underline; text-decoration-thickness: 2px; text-decoration-color: rgba(255,255,255,0.3); }
-        .jd-select option { background-color: #1a0b2e; font-weight: normal; }
-
+        /* Common Wrapper for Custom Selects */
         .custom-select-wrapper {
             position: relative;
             width: 100%;
+            /* Ensure it has layout to contain absolute children correctly */
+            min-height: 1.2rem;
         }
 
         .selected-text {
@@ -149,23 +154,50 @@
         }
 
         .hidden-select {
-            position: relative;
+            position: relative; /* Relative allows it to take up space in the flex container if needed */
             width: 100%;
             opacity: 0; 
             cursor: pointer;
             z-index: 2;
             padding: 0;
             margin: 0;
+            height: 1.2rem; /* Explicit height to match line height */
             appearance: none;
             -webkit-appearance: none;
             border: none;
             background: transparent;
         }
 
-        /* Score Input */
+        /* --- NEW: Mini Score Input for Right Column --- */
+        .mini-score-input {
+            position: absolute;
+            right: 0;
+            top: -2px; /* Slight adjustment to align with text */
+            width: 60px;
+            height: 1.2rem;
+            background-color: rgba(26, 11, 46, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 0.7rem;
+            text-align: center;
+            border-radius: 4px;
+            z-index: 100; /* Must be higher than select to be clickable */
+            display: none; /* Hidden by default */
+            outline: none;
+        }
+        
+        .mini-score-input::-webkit-outer-spin-button,
+        .mini-score-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Score Input (Bottom Left) */
         .score-wrapper {
             position: absolute;
-            bottom: 11%;
+            bottom: 13%;
             left: 5%;
             display: flex;
             align-items: baseline; 
@@ -199,54 +231,12 @@
             border-bottom: 2px solid rgba(255,255,255,0.2);
         }
         .score-input::placeholder { color: rgba(255,255,255,0.3); }
-
-        /* Settings Gear */
-        .settings-gear {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 20px;
-            color: rgba(255,255,255,0.3);
-            cursor: pointer;
-            z-index: 100;
-            transition: opacity 0.3s;
-        }
-        .settings-gear:hover { opacity: 1; }
-
-        .modal {
-            display: none;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(20, 10, 40, 0.95);
-            padding: 20px;
-            border-radius: 10px;
-            border: 1px solid rgba(255,255,255,0.2);
-            z-index: 200;
-            width: 80%;
-            text-align: center;
-            color: white;
-        }
-        .modal input[type="text"] { width: 90%; padding: 8px; margin: 10px 0; border-radius: 4px; border: none; }
-        .modal button { padding: 8px 15px; background: #6a0dad; border: none; color: white; border-radius: 4px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div class="card-container" id="main-card">
         
-        <div class="settings-gear" onclick="toggleModal()">⚙</div>
-
-        <div id="settings-modal" class="modal">
-            <h3>Fix Background</h3>
-            <p style="font-size: 0.8rem; opacity: 0.8;">If the background is missing, paste a new link below or upload the file.</p>
-            <input type="text" id="bg-url-input" placeholder="Paste Image Link Here...">
-            <br><p style="margin: 5px 0;">- OR -</p>
-            <input type="file" id="bg-file-input" accept="image/*" onchange="loadBackgroundFromFile(event)" style="color:white; font-size: 0.8rem;">
-            <br><br><button onclick="saveBackground()">Save & Close</button>
-        </div>
-
         <!-- LAYER 1: Cover Art (Behind Template) -->
         <img id="preview-image" class="cover-art-display">
 
@@ -294,11 +284,46 @@
 
         <!-- RIGHT COLUMN: Top Scores -->
         <div class="right-list-container">
-            <select class="jd-select text-style-base song-dropdown"><option value="" disabled selected>Select...</option></select>
-            <select class="jd-select text-style-base song-dropdown"><option value="" disabled selected>Select...</option></select>
-            <select class="jd-select text-style-base song-dropdown"><option value="" disabled selected>Select...</option></select>
-            <select class="jd-select text-style-base song-dropdown"><option value="" disabled selected>Select...</option></select>
-            <select class="jd-select text-style-base song-dropdown"><option value="" disabled selected>Select...</option></select>
+            <!-- Row 1 -->
+            <div class="custom-select-wrapper">
+                <div class="selected-text text-style-base" id="song-display-0">Select...</div>
+                <select class="hidden-select song-dropdown" data-index="0" onchange="handleSongSelect(this)">
+                    <option value="" disabled selected>Select...</option>
+                </select>
+                <input type="number" class="mini-score-input" id="song-score-0" placeholder="Score" min="0" max="13333" onblur="finalizeSongScore(this)" onkeypress="handleScoreKey(event, this)">
+            </div>
+            <!-- Row 2 -->
+            <div class="custom-select-wrapper">
+                <div class="selected-text text-style-base" id="song-display-1">Select...</div>
+                <select class="hidden-select song-dropdown" data-index="1" onchange="handleSongSelect(this)">
+                    <option value="" disabled selected>Select...</option>
+                </select>
+                <input type="number" class="mini-score-input" id="song-score-1" placeholder="Score" min="0" max="13333" onblur="finalizeSongScore(this)" onkeypress="handleScoreKey(event, this)">
+            </div>
+            <!-- Row 3 -->
+            <div class="custom-select-wrapper">
+                <div class="selected-text text-style-base" id="song-display-2">Select...</div>
+                <select class="hidden-select song-dropdown" data-index="2" onchange="handleSongSelect(this)">
+                    <option value="" disabled selected>Select...</option>
+                </select>
+                <input type="number" class="mini-score-input" id="song-score-2" placeholder="Score" min="0" max="13333" onblur="finalizeSongScore(this)" onkeypress="handleScoreKey(event, this)">
+            </div>
+            <!-- Row 4 -->
+            <div class="custom-select-wrapper">
+                <div class="selected-text text-style-base" id="song-display-3">Select...</div>
+                <select class="hidden-select song-dropdown" data-index="3" onchange="handleSongSelect(this)">
+                    <option value="" disabled selected>Select...</option>
+                </select>
+                <input type="number" class="mini-score-input" id="song-score-3" placeholder="Score" min="0" max="13333" onblur="finalizeSongScore(this)" onkeypress="handleScoreKey(event, this)">
+            </div>
+            <!-- Row 5 -->
+            <div class="custom-select-wrapper">
+                <div class="selected-text text-style-base" id="song-display-4">Select...</div>
+                <select class="hidden-select song-dropdown" data-index="4" onchange="handleSongSelect(this)">
+                    <option value="" disabled selected>Select...</option>
+                </select>
+                <input type="number" class="mini-score-input" id="song-score-4" placeholder="Score" min="0" max="13333" onblur="finalizeSongScore(this)" onkeypress="handleScoreKey(event, this)">
+            </div>
         </div>
 
         <div class="score-wrapper">
@@ -394,7 +419,7 @@
         ];
 
         const songData = [
-            "Abracadabra", "Abracadabra - Extreme Version", "All Star", "Anxiety", "APT", "APT - Graffiti Version", "Azizam", "Big Bad Frog", "Bluey Medley", "Born To Be Alive", "Born To Be Alive - Aerobics Version", "Chichika", "Counting Stars", "Cry baby", "Don Raja", "Don't Go Breakin My Heart", "Drip", "Feather", "Feather - Parachute Version", "Girls Just Want To Have Fun", "Girls Just Want To Have Fun - Sporty Version", "Good Girls", "Good Luck Babe", "Good Luck Babe - Drag Version", "Houdini", "Houdini - Extreme Version", "Hung Up", "Hung Up - Cosmic Fitness Version", "I Had Some Help", "It's Ok I'm Ok", "Kitipo", "La Bamba", "Louder", "Love Again", "Messy", "Moonlight", "Pop Muzik", "Prehistorock", "Rockin' Around The Christmas Tree", "Say Cheese", "Show Me What You Got", "Sokusu", "Spin Your Love", "Strangers", "Thrift Shop", "Viva La Vida", "We Just Begun", "Zombieboy"
+            "Abracadabra", "Abracadabra - Extreme Version", "All Star", "Anxiety", "APT", "APT - Graffiti Version", "Azizam", "Big Bad Frog", "Bluey Medley", "Born To Be Alive", "Born To Be Alive - Aerobics Version", "Chichika", "Counting Stars", "Cry baby", "Don Raja", "Don't Go Breaking My Heart", "Drip", "Feather", "Feather - Parachute Version", "Girls Just Want To Have Fun", "Girls Just Want To Have Fun - Sporty Version", "Good Girls", "Good Luck Babe", "Good Luck Babe - Drag Version", "Houdini", "Houdini - Extreme Version", "Hung Up", "Hung Up - Cosmic Fitness Version", "I Had Some Help", "It's Ok I'm Ok", "Kitipo", "La Bamba", "Louder", "Love Again", "Messy", "Moonlight", "Pop Muzik", "Prehistorock", "Rockin' Around The Christmas Tree", "Say Cheese", "Show Me What You Got", "Sokusu", "Spin Your Love", "Strangers", "Thrift Shop", "Viva La Vida", "We Just Begun", "Zombieboy"
         ];
 
         // Initialize lists
@@ -402,6 +427,7 @@
             const coachSelects = document.querySelectorAll('.coach-dropdown');
             const songSelects = document.querySelectorAll('.song-dropdown');
             
+            // Populate Coaches
             coachData.sort((a, b) => a.coach.localeCompare(b.coach));
             coachSelects.forEach(select => {
                 coachData.forEach(item => {
@@ -412,6 +438,7 @@
                 });
             });
 
+            // Populate Songs
             songData.sort(); 
             songSelects.forEach(select => {
                 songData.forEach(song => {
@@ -423,6 +450,7 @@
             });
         });
 
+        // Left Column: Update text immediately
         function updateDisplay(selectElement) {
             const index = selectElement.getAttribute('data-index');
             const displayDiv = document.getElementById(`display-${index}`);
@@ -431,7 +459,58 @@
             }
         }
 
-        // --- SCORE INPUT LOGIC ---
+        // Right Column: Song Selected -> Show Score Input
+        function handleSongSelect(selectElement) {
+            const index = selectElement.getAttribute('data-index');
+            const displayDiv = document.getElementById(`song-display-${index}`);
+            const inputElement = document.getElementById(`song-score-${index}`);
+            
+            if (selectElement.value) {
+                // Update display to just the song name for now
+                displayDiv.textContent = selectElement.value;
+                
+                // Show the input field
+                inputElement.style.display = 'block';
+                inputElement.value = ''; // Reset value
+                inputElement.focus();
+            }
+        }
+
+        // Right Column: Score Input Blur -> Finalize
+        function finalizeSongScore(inputElement) {
+            // Validate value
+            let val = parseInt(inputElement.value);
+            if (inputElement.value === '') {
+                // If empty, hide input and keep just song name
+                inputElement.style.display = 'none';
+                return;
+            }
+
+            if (isNaN(val) || val < 0) val = 0;
+            if (val > 13333) val = 13333;
+
+            // Get current song name from the select
+            const index = inputElement.id.split('-')[2];
+            const selectElement = document.querySelector(`.song-dropdown[data-index="${index}"]`);
+            const displayDiv = document.getElementById(`song-display-${index}`);
+            
+            if (selectElement.value) {
+                // Update text to "Song Name - Score"
+                displayDiv.textContent = `${selectElement.value} - ${val}`;
+            }
+
+            // Hide the input
+            inputElement.style.display = 'none';
+        }
+
+        // Allow Enter key to finish input
+        function handleScoreKey(event, inputElement) {
+            if (event.key === 'Enter') {
+                inputElement.blur();
+            }
+        }
+
+        // --- SCORE INPUT LOGIC (Bottom Left) ---
         function validateScore(input) {
             // Remove non-numeric characters
             input.value = input.value.replace(/[^0-9]/g, '');
@@ -470,37 +549,6 @@
                 reader.onload = function(e) {
                     preview.src = e.target.result;
                     preview.style.display = 'block';
-                }
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-
-        const modal = document.getElementById('settings-modal');
-        const card = document.getElementById('main-card');
-        const templateLayer = document.getElementById('template-layer');
-        const urlInput = document.getElementById('bg-url-input');
-
-        function toggleModal() {
-            modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
-        }
-
-        function saveBackground() {
-            const newUrl = urlInput.value.trim();
-            if (newUrl) {
-                // Update the TEMPLATE layer, not the card background
-                templateLayer.style.backgroundImage = `url('${newUrl}')`;
-            }
-            toggleModal();
-        }
-
-        function loadBackgroundFromFile(event) {
-            const input = event.target;
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    // Update the TEMPLATE layer, not the card background
-                    templateLayer.style.backgroundImage = `url('${e.target.result}')`;
-                    urlInput.value = ''; 
                 }
                 reader.readAsDataURL(input.files[0]);
             }
