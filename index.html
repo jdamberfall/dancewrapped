@@ -139,6 +139,7 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            transition: font-size 0.2s ease; /* Smooth resizing */
         }
 
         /* Common Wrapper for Custom Selects */
@@ -203,7 +204,8 @@
         /* Score Input (Bottom Left) */
         .score-wrapper {
             position: absolute;
-            bottom: 13%;
+            /* LOWERED: Changed from 13% to 12.8% for a subtle drop */
+            bottom: 12.8%;
             left: 5%;
             display: flex;
             align-items: baseline; 
@@ -456,16 +458,31 @@
             });
         });
 
-        // Left Column: Update text immediately
+        // TEXT RESIZING LOGIC
+        function fitText(element) {
+            // Reset to base size first
+            element.style.fontSize = '0.8rem';
+            
+            const len = element.textContent.length;
+            // Thresholds for shrinking
+            if (len > 30) {
+                element.style.fontSize = '0.55rem';
+            } else if (len > 22) {
+                element.style.fontSize = '0.65rem';
+            }
+        }
+
+        // Left Column: Update text and resize
         function updateDisplay(selectElement) {
             const index = selectElement.getAttribute('data-index');
             const displayDiv = document.getElementById(`display-${index}`);
             if (selectElement.value) {
                 displayDiv.textContent = selectElement.value;
+                fitText(displayDiv);
             }
         }
 
-        // Right Column: Song Selected -> Show Score Input
+        // Right Column: Song Selected -> Show Score Input + Resize Text
         function handleSongSelect(selectElement) {
             const index = selectElement.getAttribute('data-index');
             const displayDiv = document.getElementById(`song-display-${index}`);
@@ -474,6 +491,7 @@
             if (selectElement.value) {
                 // Update display to just the song name for now
                 displayDiv.textContent = selectElement.value;
+                fitText(displayDiv);
                 
                 // Show the input field
                 inputElement.style.display = 'block';
@@ -482,7 +500,7 @@
             }
         }
 
-        // Right Column: Score Input Blur -> Finalize
+        // Right Column: Score Input Blur -> Finalize + Resize Text
         function finalizeSongScore(inputElement) {
             // Validate value
             let val = parseInt(inputElement.value);
@@ -503,6 +521,7 @@
             if (selectElement.value) {
                 // Update text to "Song Name - Score"
                 displayDiv.textContent = `${selectElement.value} - ${val}`;
+                fitText(displayDiv);
             }
 
             // Hide the input
